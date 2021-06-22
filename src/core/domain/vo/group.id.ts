@@ -1,8 +1,8 @@
-export class GroupId {
+import {Uid} from "./uid";
 
-    private readonly uid:string;
+export class GroupId extends Uid {
 
-    constructor(uid:string) {
-        this.uid = uid;
+    public isEqual(groupId: GroupId): boolean {
+        return groupId.id === this.id;
     }
 }

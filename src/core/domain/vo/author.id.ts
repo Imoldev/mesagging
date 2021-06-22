@@ -1,7 +1,8 @@
-export class AuthorId {
+import {Uid} from "./uid";
+
+export class AuthorId extends Uid{
     
     isEqual(authorId: AuthorId):boolean {
-        return false;
+       return authorId.id === this.id;
     }
-
 }
