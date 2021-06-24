@@ -7,12 +7,12 @@ export class Invite {
     private readonly inviteId: InviteId
     private readonly overdueDatetime: Date;
     private readonly expected: AuthorId[];
+    private selected: AuthorId;
     private status: Status;
     private revoked: AuthorId[];
-    private selected: AuthorId;
     private resolver: IResolver;
 
-    constructor(inviteId: InviteId, expected: AuthorId[],  createdOn: Date, overdueDatetime: Date, resolver: IResolver) {
+    constructor(inviteId: InviteId, expected: AuthorId[], createdOn: Date, resolver: IResolver, overdueDatetime: Date) {
         this.inviteId = inviteId;
         this.expected = expected;
         this.overdueDatetime = overdueDatetime;
@@ -22,12 +22,19 @@ export class Invite {
 
     public revoke(consultant: AuthorId, revokedOn: Date): void {
         if (!this.status.isActive()) {
-            throw new Error('incorrect invite status');
+            throw new Error('incorrect invite status to revoke');
         }
         this.addRevoked(consultant);
-        if (this.resolver.isReadyToResolve(this.expected, this.revoked)) {
-            this.selected = this.resolver.resolve(this.revoked);
-            this.status = Status.resolved(revokedOn);
+    }
+
+    public resolve(resolvedOn: Date): void {
+        if (!this.status.isActive()) {
+            throw new Error('incorrect invite status to resolve');
+        }
+        const selected = this.resolver.resolve(this.revoked, resolvedOn, this.expected);
+        if (selected !== null) {
+            this.selected = selected;
+            this.status = Status.resolved(resolvedOn);
         }
     }
 
@@ -58,6 +65,7 @@ export class Invite {
 
 
 class Status {
+
     public readonly status: 'Active' | "Resolved"
     public readonly statusOn: Date;
 
@@ -74,11 +82,13 @@ class Status {
         return new Status("Resolved", datetime);
     }
 
+
     public isActive(): boolean {
         return this.status === 'Active';
     }
 
-    public isResolved():boolean {
+
+    public isResolved(): boolean {
         return this.status === 'Resolved';
     }
 }
