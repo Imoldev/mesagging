@@ -3,13 +3,13 @@ import {validate as uuidValidate} from 'uuid';
 
 export abstract class Uid {
 
-    public readonly id: string;
+    public readonly value: string;
 
-    constructor(id: string) {
-        if (!uuidValidateV4(id)) {
+    constructor(value: string) {
+        if (!uuidValidateV4(value)) {
             throw new Error('invalid uid');
         }
-        this.id = id;
+        this.value = value;
     }
 
 }
