@@ -21,4 +21,8 @@ export class Shuffle implements IResolver {
         const rand = getOneOfSequence(invokes.size);
         return  Array.from(invokes.values())[rand].consultantId;
     }
+
+    waitForDatetime(): Date | null {
+        return this.waitFor;
+    }
 }

@@ -10,4 +10,8 @@ export class FirstInvoked implements IResolver {
         }
         return Array.from(invokes.values())[0].consultantId;
     }
+
+    waitForDatetime(): Date | null {
+        return null;
+    }
 }

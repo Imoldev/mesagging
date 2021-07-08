@@ -8,12 +8,12 @@ import {TenantId} from "../vo/tenant.id";
 
 export class Team {
 
-    private id: TeamId;
-    private tenantId: TenantId;
-    private roomId: RoomId;
+    private readonly id: TeamId;
+    private readonly tenantId: TenantId;
+    private readonly roomId: RoomId;
     private readonly inviteOverduePeriod: number;
     private readonly invitedConsultants: Set<ConsultantId>;
-    private resolverFabric: IResolverFabric;
+    private  resolverFabric: IResolverFabric;
 
 
     public constructor(id: TeamId, tenantId: TenantId, roomId: RoomId, resolverFabric: IResolverFabric, inviteOverduePeriod: number) {
