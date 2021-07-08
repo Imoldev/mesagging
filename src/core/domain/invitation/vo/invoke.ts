@@ -1,6 +1,6 @@
 import {ConsultantId} from "./consultant.id";
 
-export class Revoke {
+export class Invoke {
     public readonly  consultantId: ConsultantId;
     public readonly  weight: number;
 

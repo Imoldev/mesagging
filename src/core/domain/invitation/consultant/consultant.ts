@@ -1,5 +1,5 @@
 import {ConsultantId} from "../vo/consultant.id";
-import {Revoke} from "../vo/revoke";
+import {Invoke} from "../vo/invoke";
 import {TenantId} from "../vo/tenant.id";
 
 
@@ -25,11 +25,7 @@ export class Consultant {
         this.weight = weight;
     }
 
-    public makeRevoke(): Revoke {
-        return new Revoke(this.id, this.weight);
-    }
-
-    public identity(): string {
-        return this.id.value
+    public makeInvoke(): Invoke {
+        return new Invoke(this.id, this.weight);
     }
 }

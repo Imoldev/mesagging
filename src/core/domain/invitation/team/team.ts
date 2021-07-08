@@ -1,27 +1,30 @@
 import {TeamId} from "../vo/team.id";
-import {InviteId} from "../vo/invite.id";
-import {RoomId} from "../vo/room.id";
-import {Consultant} from "../consultant";
-import {IResolverFabric} from "../resolvers/i.resolver.fabric";
+import {IResolverFabric} from "./i.resolver.fabric";
 import {Invite} from "../invite/invite.";
+import {RoomId} from "../vo/room.id";
+import {ConsultantId} from "../vo/consultant.id";
+import {TenantId} from "../vo/tenant.id";
 
-const moment = require('moment');
 
 export class Team {
 
     private id: TeamId;
+    private tenantId: TenantId;
+    private roomId: RoomId;
     private readonly inviteOverduePeriod: number;
-    private readonly invitedConsultants: Map<string, Consultant>;
+    private readonly invitedConsultants: Set<ConsultantId>;
     private resolverFabric: IResolverFabric;
 
 
-    public constructor(id: TeamId, resolverFabric: IResolverFabric, inviteOverduePeriod: number) {
-        this.id = id;
-        this.resolverFabric = resolverFabric;
-        this.invitedConsultants = new Map<string, Consultant>();
+    public constructor(id: TeamId, tenantId: TenantId, roomId: RoomId, resolverFabric: IResolverFabric, inviteOverduePeriod: number) {
         if (!Number.isInteger(inviteOverduePeriod) || inviteOverduePeriod < 0) {
             throw new Error('overdue period must be positive integer');
         }
+        this.id = id;
+        this.tenantId = tenantId;
+        this.roomId = roomId;
+        this.resolverFabric = resolverFabric;
+        this.invitedConsultants = new Set<ConsultantId>();
         this.inviteOverduePeriod = inviteOverduePeriod;
     }
 
@@ -29,20 +32,20 @@ export class Team {
         this.resolverFabric = resolverFabric;
     }
 
-    public addInvitedConsultant(consultant: Consultant) {
-        this.invitedConsultants.set(consultant.stringIdent(), consultant);
+    public addInvitedConsultant(consultantId: ConsultantId) {
+        this.invitedConsultants.add(consultantId);
     }
 
-    public deleteConsultant(ident: string) {
-        if (!this.invitedConsultants.has(ident)) {
+    public deleteConsultant(consultantId: ConsultantId) {
+        if (!this.invitedConsultants.has(consultantId)) {
             throw new Error('unable to delete: consultant not found')
         }
-        this.invitedConsultants.delete(ident);
+        this.invitedConsultants.delete(consultantId);
     }
 
-    public createInvite(inviteId: InviteId, roomId: RoomId, cratedOn: Date): Invite {
-        const overdueDate = moment(cratedOn).clone().add(this.inviteOverduePeriod, 'seconds').toDate();
-        return new Invite(inviteId, roomId, this.invitedConsultants, cratedOn, this.resolverFabric.getResolver(), overdueDate)
+    public createInvite(roomId: RoomId, cratedOn: Date): Invite {
+        const resolver = this.resolverFabric.getResolver();
+        return new Invite(this.tenantId, roomId, this.invitedConsultants, resolver)
     }
 }
 

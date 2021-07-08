@@ -1,95 +1,73 @@
-import {ConsultRoomId} from "../vo/consult.room.id";
+import {RoomId} from "../vo/room.id";
 import {TenantId} from "../vo/tenant.id";
 import {ConsultantId} from "../vo/consultant.id";
-import {Consultant} from '../consultant/consultant';
-import {Revoke} from "../vo/revoke";
-import {IResolver} from "../i.resolver";
+import {Invoke} from "../vo/invoke";
+import {IEvent} from "../events/i.event";
+import {InvokeExist} from "../events/invoke.exist";
+import EventEmitter from "events";
+import {IResolver} from "./i.resolver";
+import {InviteResolved} from "../events/invite.resolved";
 
 
 export class Invite {
 
-    private readonly roomId: ConsultRoomId;
-    private readonly tenantId: TenantId;
-    private readonly expected: Set<string>;
-    private readonly createdOn: Date;
-    private readonly resolver: IResolver;
-    private readonly overdueDatetime: Date;
-    private readonly revokes: Map<string, Revoke>;
-    private selected: ConsultantId | null = null;
-    private status: Status;
+    protected readonly roomId: RoomId;
+    protected readonly tenantId: TenantId;
+    protected readonly expected: Set<ConsultantId>;
+    protected readonly invokes: Set<Invoke>;
+    protected selected: ConsultantId | null = null;
+    protected eventsStore: Array<IEvent>
+    private resolver: IResolver;
 
-    constructor
-    (
-        roomId: ConsultRoomId,
-        tenantId: TenantId,
-        expected: Set<string>,
-        createdOn: Date,
-        resolver: IResolver,
-        overdueDatetime: Date
-    ) {
+    public constructor(tenantId: TenantId, roomId: RoomId, expected: Set<ConsultantId>, resolver: IResolver) {
         if (expected.size === 0) {
             throw new Error('consultants list must no be empty')
         }
-        this.revokes = new Map<string, Revoke>();
+        this.invokes = new Set<Invoke>();
         this.roomId = roomId;
         this.tenantId = tenantId;
         this.expected = expected;
-        this.createdOn = createdOn;
         this.resolver = resolver;
-        this.overdueDatetime = overdueDatetime;
-        this.status = Status.active(createdOn);
-    }
-
-    public acceptRevoke(consultant: Consultant): void {
-        if (!this.status.isActive()) {
-            throw new Error('incorrect invite status to revoke');
-        }
-        if (!this.expected.has(consultant.id.toString())) {
-            throw new Error('unexpected consultant');
-        }
-        this.revokes.set(consultant.id.toString(), consultant.makeRevoke());
     }
 
     public resolve(resolvedOn: Date): void {
-        if (!this.status.isActive()) {
-            throw new Error('incorrect invite status to resolve');
+        if (this.isResolved()) {
+            throw new Error('unable to resolve: already resolved');
         }
-        const selected = this.resolver.resolve(this.revokes, resolvedOn, this.expected);
-        if (selected !== null) {
-            this.selected = selected;
-            this.status = Status.resolved(resolvedOn);
+        const consultantId = this.resolver.resolve(this.invokes, resolvedOn, this.expected);
+        if (consultantId !== null) {
+            this.selected = consultantId;
+            this.eventsStore.push(new InviteResolved(this.tenantId, this.roomId, this.selected, resolvedOn));
         }
     }
 
-    public getSolution(): ConsultantId | null {
-        return this.selected;
-    }
-}
-
-
-class Status {
-
-    public readonly status: 'Active' | "Resolved"
-    public readonly statusOn: Date;
-
-    private constructor(status: 'Active' | "Resolved", statusOn: Date) {
-        this.status = status;
-        this.statusOn = statusOn;
+    public acceptInvoke(invoke: Invoke, invokedOn: Date): void {
+        if (this.isResolved()) {
+            throw new Error('unable to invoke: already resolved');
+        }
+        if (!this.isInExpected(invoke.consultantId)) {
+            throw new Error('unexpected consultant');
+        }
+        this.invokes.add(invoke);
+        this.eventsStore.push(new InvokeExist(this.tenantId, this.roomId, invoke.consultantId, invokedOn))
     }
 
-    public static active(datetime: Date): Status {
-        return new Status("Active", datetime);
+    public exposeEvents(emitter: EventEmitter) {
+        this.eventsStore.forEach((event) => {
+            emitter.emit(event.constructor.name, event);
+        })
     }
 
-    public static resolved(datetime: Date): Status {
-        return new Status("Resolved", datetime);
+    private isInExpected(consultantId: ConsultantId): boolean {
+        this.expected.forEach((expectedConsultantId) => {
+            if (expectedConsultantId.isEqual(consultantId)) {
+                return true;
+            }
+        });
+        return false;
     }
 
-    public isActive(): boolean {
-        return this.status === 'Active';
-    }
-
-    public isResolved(): boolean {
-        return this.status === 'Resolved';
+    private isResolved(): boolean {
+        return this.selected !== null;
     }
 }

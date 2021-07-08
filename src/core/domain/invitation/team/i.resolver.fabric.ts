@@ -1,4 +1,4 @@
-import {IResolver} from "./i.resolver";
+import {IResolver} from "../invite/i.resolver";
 
 export interface IResolverFabric {
     getResolver():IResolver
