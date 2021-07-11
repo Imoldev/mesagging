@@ -1,5 +1,5 @@
 import {IResolver} from "../invite/i.resolver";
 
 export interface IResolverFabric {
-    getResolver():IResolver
+    getResolver(createdOn: Date):IResolver
 }

@@ -7,6 +7,7 @@ import {InvokeExist} from "../events/invoke.exist";
 import EventEmitter from "events";
 import {IResolver} from "./i.resolver";
 import {InviteResolved} from "../events/invite.resolved";
+import {Consultant} from "../consultant/consultant";
 
 
 export class Invite {
@@ -16,7 +17,7 @@ export class Invite {
     protected readonly expected: Set<ConsultantId>;
     protected readonly invokes: Set<Invoke>;
     protected selected: ConsultantId | null = null;
-    protected eventsStore: Array<IEvent>
+    protected eventsStore: Array<IEvent> = [];
     private resolver: IResolver;
 
     public constructor(tenantId: TenantId, roomId: RoomId, expected: Set<ConsultantId>, resolver: IResolver) {
@@ -41,13 +42,16 @@ export class Invite {
         }
     }
 
-    public acceptInvoke(invoke: Invoke, invokedOn: Date): void {
+    public acceptInvoke(consultant: Consultant, invokedOn: Date): void {
         if (this.isResolved()) {
             throw new Error('unable to invoke: already resolved');
         }
+        const invoke = consultant.makeInvoke();
+
         if (!this.isInExpected(invoke.consultantId)) {
             throw new Error('unexpected consultant');
         }
+
         this.invokes.add(invoke);
         this.eventsStore.push(new InvokeExist(this.tenantId, this.roomId, invoke.consultantId, invokedOn))
     }
@@ -59,11 +63,11 @@ export class Invite {
     }
 
     private isInExpected(consultantId: ConsultantId): boolean {
-        this.expected.forEach((expectedConsultantId) => {
+        for (let expectedConsultantId of this.expected) {
             if (expectedConsultantId.isEqual(consultantId)) {
                 return true;
             }
-        });
+        }
         return false;
     }
 

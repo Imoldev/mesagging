@@ -4,7 +4,10 @@ import {Invite} from "../invite/invite.";
 import {RoomId} from "../vo/room.id";
 import {ConsultantId} from "../vo/consultant.id";
 import {TenantId} from "../vo/tenant.id";
-
+import {InviteCreated} from "../events/invite.created";
+import {IEvent} from "../events/i.event";
+import EventEmitter from "events";
+import {plusToDatetime} from "../domain_services/datetime";
 
 export class Team {
 
@@ -13,8 +16,8 @@ export class Team {
     private readonly roomId: RoomId;
     private readonly inviteOverduePeriod: number;
     private readonly invitedConsultants: Set<ConsultantId>;
-    private  resolverFabric: IResolverFabric;
-
+    private resolverFabric: IResolverFabric;
+    private eventsStore: Array<IEvent>;
 
     public constructor(id: TeamId, tenantId: TenantId, roomId: RoomId, resolverFabric: IResolverFabric, inviteOverduePeriod: number) {
         if (!Number.isInteger(inviteOverduePeriod) || inviteOverduePeriod < 0) {
@@ -32,7 +35,7 @@ export class Team {
         this.resolverFabric = resolverFabric;
     }
 
-    public addInvitedConsultant(consultantId: ConsultantId) {
+    public addConsultant(consultantId: ConsultantId) {
         this.invitedConsultants.add(consultantId);
     }
 
@@ -44,8 +47,24 @@ export class Team {
     }
 
     public createInvite(roomId: RoomId, cratedOn: Date): Invite {
-        const resolver = this.resolverFabric.getResolver();
-        return new Invite(this.tenantId, roomId, this.invitedConsultants, resolver)
+        const resolver = this.resolverFabric.getResolver(cratedOn);
+        const overdueDatetime = plusToDatetime(cratedOn, this.inviteOverduePeriod);
+        const inviteCreated = new InviteCreated
+        (
+            this.tenantId,
+            roomId, this.invitedConsultants,
+            overdueDatetime,
+            resolver.waitForDatetime(),
+            cratedOn
+        );
+        this.eventsStore.push(inviteCreated);
+        return new Invite(this.tenantId, roomId, this.invitedConsultants, resolver);
+    }
+
+    public exposeEvents(emitter: EventEmitter) {
+        this.eventsStore.forEach((event) => {
+            emitter.emit(event.constructor.name, event);
+        })
     }
 }
 
