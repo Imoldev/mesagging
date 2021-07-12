@@ -1,7 +1,7 @@
-import {IResolver} from "../i.resolver";
-import {Invoke} from "../../vo/invoke";
-import {ConsultantId} from "../../vo/consultant.id";
-import {getOneOfSequence} from "../../domain_services/rand";
+import {IResolver} from "../../i.resolver";
+import {Invoke} from "../../../vo/invoke";
+import {ConsultantId} from "../../../vo/consultant.id";
+import {getOneOfSequence} from "../../../domain_services/rand";
 
 export class Shuffle implements IResolver {
 

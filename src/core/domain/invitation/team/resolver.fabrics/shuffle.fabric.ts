@@ -1,6 +1,6 @@
 import {IResolverFabric} from "../i.resolver.fabric";
 import {IResolver} from "../../invite/i.resolver";
-import {Shuffle} from "../../invite/resolvers/shuffle";
+import {Shuffle} from "../../invite/resolvers/shuffle/shuffle";
 import {plusToDatetime} from "../../domain_services/datetime";
 
 export class ShuffleFabric implements IResolverFabric {

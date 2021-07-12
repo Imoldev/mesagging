@@ -1,6 +1,6 @@
-import {IResolver} from "../i.resolver";
-import {Invoke} from "../../vo/invoke";
-import {ConsultantId} from "../../vo/consultant.id";
+import {IResolver} from "../../i.resolver";
+import {Invoke} from "../../../vo/invoke";
+import {ConsultantId} from "../../../vo/consultant.id";
 
 export class FirstInvoked implements IResolver {
 

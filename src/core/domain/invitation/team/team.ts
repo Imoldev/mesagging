@@ -10,22 +10,19 @@ import EventEmitter from "events";
 import {plusToDatetime} from "../domain_services/datetime";
 
 export class Team {
-
     private readonly id: TeamId;
     private readonly tenantId: TenantId;
-    private readonly roomId: RoomId;
     private readonly inviteOverduePeriod: number;
     private readonly invitedConsultants: Set<ConsultantId>;
     private resolverFabric: IResolverFabric;
-    private eventsStore: Array<IEvent>;
+    private eventsStore: Array<IEvent> = [];
 
-    public constructor(id: TeamId, tenantId: TenantId, roomId: RoomId, resolverFabric: IResolverFabric, inviteOverduePeriod: number) {
+    public constructor(id: TeamId, tenantId: TenantId, resolverFabric: IResolverFabric, inviteOverduePeriod: number) {
         if (!Number.isInteger(inviteOverduePeriod) || inviteOverduePeriod < 0) {
             throw new Error('overdue period must be positive integer');
         }
         this.id = id;
         this.tenantId = tenantId;
-        this.roomId = roomId;
         this.resolverFabric = resolverFabric;
         this.invitedConsultants = new Set<ConsultantId>();
         this.inviteOverduePeriod = inviteOverduePeriod;
@@ -36,6 +33,9 @@ export class Team {
     }
 
     public addConsultant(consultantId: ConsultantId) {
+        if (this.isConsultantAlreadyIn(consultantId)) {
+            throw new Error('this consultant already in');
+        }
         this.invitedConsultants.add(consultantId);
     }
 
@@ -65,6 +65,15 @@ export class Team {
         this.eventsStore.forEach((event) => {
             emitter.emit(event.constructor.name, event);
         })
+    }
+
+    private isConsultantAlreadyIn(consultantId: ConsultantId): boolean {
+        for (let invited of this.invitedConsultants) {
+            if (invited.isEqual(consultantId)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 

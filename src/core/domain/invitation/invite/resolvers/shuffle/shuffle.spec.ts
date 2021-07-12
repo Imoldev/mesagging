@@ -1,6 +1,6 @@
 import {Shuffle} from "./shuffle";
-import {Invoke} from "../../vo/invoke";
-import {ConsultantId} from "../../vo/consultant.id";
+import {Invoke} from "../../../vo/invoke";
+import {ConsultantId} from "../../../vo/consultant.id";
 
 const shuffleResolver = new Shuffle(new Date('2021-01-26T13:51:50.417-07:00'))
 const expected = new Set

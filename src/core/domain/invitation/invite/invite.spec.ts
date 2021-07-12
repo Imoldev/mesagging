@@ -2,7 +2,7 @@ import {Invite} from "./invite.";
 import {TenantId} from "../vo/tenant.id";
 import {RoomId} from "../vo/room.id";
 import {ConsultantId} from "../vo/consultant.id";
-import {Shuffle} from "./resolvers/shuffle";
+import {Shuffle} from "./resolvers/shuffle/shuffle";
 import {Consultant} from "../consultant/consultant";
 import {EventEmitter} from "events";
 import {InvokeExist} from "../events/invoke.exist";
