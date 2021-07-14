@@ -7,25 +7,27 @@ export class Consultant {
 
     public readonly id: ConsultantId;
     private tenantId: TenantId;
-    private weight: number;
+    private score: number;
 
-    public constructor(id: ConsultantId, tenantId: TenantId, weight: number = 1) {
-        if (!Number.isInteger(weight) || weight < 1) {
-            throw new Error('weight must be integer and greater then one')
-        }
+    public constructor(id: ConsultantId, tenantId: TenantId, score: number = 1) {
+        this.setScore(score);
         this.id = id;
         this.tenantId = tenantId;
-        this.weight = weight;
+        this.score = score;
     }
 
-    public changeWeight(weight: number) {
-        if (!Number.isInteger(weight) || weight < 1) {
-            throw new Error('weight must be integer and greater then one')
-        }
-        this.weight = weight;
+    public changeScore(score: number) {
+       this.setScore(score);
     }
 
     public makeInvoke(): Invoke {
-        return new Invoke(this.id, this.weight);
+        return new Invoke(this.id, this.score);
+    }
+
+    private setScore(score: number) {
+        if (!Number.isInteger(score) || score < 1) {
+            throw new Error('score must be integer and greater then one')
+        }
+        this.score = score;
     }
 }
