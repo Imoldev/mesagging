@@ -1,6 +1,6 @@
 import {ConsultantId} from "./consultant.id";
 
-export class Invoke {
+export class Respond {
     public readonly  consultantId: ConsultantId;
     public readonly  score: number;
 

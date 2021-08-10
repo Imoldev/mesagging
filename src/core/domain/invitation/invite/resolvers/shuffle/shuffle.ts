@@ -1,5 +1,5 @@
 import {IResolver} from "../../i.resolver";
-import {Invoke} from "../../../vo/invoke";
+import {Respond} from "../../../vo/respond";
 import {ConsultantId} from "../../../vo/consultant.id";
 import {getOneOfSequence} from "../../../domain_services/rand";
 
@@ -11,15 +11,15 @@ export class Shuffle implements IResolver {
         this.waitFor = waitFor;
     }
 
-    resolve(invokes: Set<Invoke>, tryingOn: Date, expected: Set<ConsultantId>): ConsultantId | null {
-        if (tryingOn < this.waitFor && expected.size > invokes.size) {
+    resolve(responds: Set<Respond>, tryingOn: Date, expected: Set<ConsultantId>): ConsultantId | null {
+        if (tryingOn < this.waitFor && expected.size > responds.size) {
             return null;
         }
-        if (invokes.size === 0) {
+        if (responds.size === 0) {
             return null;
         }
-        const rand = getOneOfSequence(invokes.size);
-        return  Array.from(invokes.values())[rand].consultantId;
+        const rand = getOneOfSequence(responds.size);
+        return  Array.from(responds.values())[rand].consultantId;
     }
 
     waitForDatetime(): Date | null {

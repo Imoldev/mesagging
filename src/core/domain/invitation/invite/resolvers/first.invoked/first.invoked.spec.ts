@@ -1,5 +1,5 @@
 import {FirstInvoked} from "./first.invoked";
-import {Invoke} from "../../../vo/invoke";
+import {Respond} from "../../../vo/respond";
 import {ConsultantId} from "../../../vo/consultant.id";
 
 const firstInvokedResolver = new FirstInvoked();
@@ -14,7 +14,7 @@ const expected = new Set
     ]
 )
 
-const invokes = new Set([ new Invoke(new ConsultantId('7af7aa56-3851-42eb-9667-e3b830eb8c23'), 1)])
+const invokes = new Set([ new Respond(new ConsultantId('7af7aa56-3851-42eb-9667-e3b830eb8c23'), 1)])
 
 test('if consultant invokes - resolve occur', () => {
     expect(firstInvokedResolver.resolve(invokes, new Date(), expected))

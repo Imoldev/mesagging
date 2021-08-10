@@ -1,7 +1,7 @@
 import {RoomId} from "../vo/room.id";
 import {TenantId} from "../vo/tenant.id";
 import {ConsultantId} from "../vo/consultant.id";
-import {Invoke} from "../vo/invoke";
+import {Respond} from "../vo/respond";
 import {IEvent} from "../events/i.event";
 import {InvokeExist} from "../events/invoke.exist";
 import EventEmitter from "events";
@@ -15,7 +15,7 @@ export class Invite {
     protected readonly roomId: RoomId;
     protected readonly tenantId: TenantId;
     protected readonly expected: Set<ConsultantId>;
-    protected readonly invokes: Set<Invoke>;
+    protected readonly responds: Set<Respond>;
     protected selected: ConsultantId | null = null;
     protected eventsStore: Array<IEvent> = [];
     private resolver: IResolver;
@@ -24,7 +24,7 @@ export class Invite {
         if (expected.size === 0) {
             throw new Error('consultants list must no be empty')
         }
-        this.invokes = new Set<Invoke>();
+        this.responds = new Set<Respond>();
         this.roomId = roomId;
         this.tenantId = tenantId;
         this.expected = expected;
@@ -35,24 +35,24 @@ export class Invite {
         if (this.isResolved()) {
             throw new Error('unable to resolve: already resolved');
         }
-        const consultantId = this.resolver.resolve(this.invokes, resolvedOn, this.expected);
+        const consultantId = this.resolver.resolve(this.responds, resolvedOn, this.expected);
         if (consultantId !== null) {
             this.selected = consultantId;
             this.eventsStore.push(new InviteResolved(this.tenantId, this.roomId, this.selected, resolvedOn));
         }
     }
 
-    public acceptInvoke(consultant: Consultant, invokedOn: Date): void {
+    public acceptRespond(consultant: Consultant, invokedOn: Date): void {
         if (this.isResolved()) {
             throw new Error('unable to invoke: already resolved');
         }
-        const invoke = consultant.makeInvoke();
+        const invoke = consultant.respond();
 
         if (!this.isInExpected(invoke.consultantId)) {
             throw new Error('unexpected consultant');
         }
 
-        this.invokes.add(invoke);
+        this.responds.add(invoke);
         this.eventsStore.push(new InvokeExist(this.tenantId, this.roomId, invoke.consultantId, invokedOn))
     }
 

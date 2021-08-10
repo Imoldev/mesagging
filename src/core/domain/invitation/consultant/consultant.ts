@@ -1,5 +1,5 @@
 import {ConsultantId} from "../vo/consultant.id";
-import {Invoke} from "../vo/invoke";
+import {Respond} from "../vo/respond";
 import {TenantId} from "../vo/tenant.id";
 
 
@@ -20,8 +20,8 @@ export class Consultant {
        this.setScore(score);
     }
 
-    public makeInvoke(): Invoke {
-        return new Invoke(this.id, this.score);
+    public respond(): Respond {
+        return new Respond(this.id, this.score);
     }
 
     private setScore(score: number) {

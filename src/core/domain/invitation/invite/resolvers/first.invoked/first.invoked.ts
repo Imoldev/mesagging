@@ -1,14 +1,14 @@
 import {IResolver} from "../../i.resolver";
-import {Invoke} from "../../../vo/invoke";
+import {Respond} from "../../../vo/respond";
 import {ConsultantId} from "../../../vo/consultant.id";
 
 export class FirstInvoked implements IResolver {
 
-    resolve(invokes: Set<Invoke>, tryingOn: Date, expected: Set<ConsultantId>): ConsultantId | null {
-        if (invokes.size === 0) {
+    resolve(responds: Set<Respond>, tryingOn: Date, expected: Set<ConsultantId>): ConsultantId | null {
+        if (responds.size === 0) {
             return null;
         }
-        return Array.from(invokes.values())[0].consultantId;
+        return Array.from(responds.values())[0].consultantId;
     }
 
     waitForDatetime(): Date | null {

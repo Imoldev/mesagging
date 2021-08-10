@@ -1,14 +1,14 @@
-import {Team} from "./team";
-import {TeamId} from "../vo/team.id";
-import {TenantId} from "../vo/tenant.id";
-import {ShuffleFabric} from "./resolver.fabrics/shuffle.fabric";
-import {ConsultantId} from "../vo/consultant.id";
-import {RoomId} from "../vo/room.id";
+import {Team} from "../team";
+import {TeamId} from "../../vo/team.id";
+import {TenantId} from "../../vo/tenant.id";
+import {ShuffleFabric} from "../resolver.fabrics/shuffle.fabric";
+import {ConsultantId} from "../../vo/consultant.id";
+import {RoomId} from "../../vo/room.id";
 import {EventEmitter} from "events";
-import {InvokeExist} from "../events/invoke.exist";
-import {InviteCreated} from "../events/invite.created";
-import {Invite} from "../invite/invite.";
-import {Shuffle} from "../invite/resolvers/shuffle/shuffle";
+import {InvokeExist} from "../../events/invoke.exist";
+import {InviteCreated} from "../../events/invite.created";
+import {Invite} from "../../invite/invite.";
+import {Shuffle} from "../../invite/resolvers/shuffle/shuffle";
 
 
 const team = new Team

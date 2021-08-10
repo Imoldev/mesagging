@@ -1,8 +1,8 @@
 import {ConsultantId} from "../vo/consultant.id";
-import {Invoke} from "../vo/invoke";
+import {Respond} from "../vo/respond";
 
 export interface IResolver {
     waitForDatetime(): Date | null;
 
-    resolve(invokes: Set<Invoke>, tryingOn: Date, expected: Set<ConsultantId>): ConsultantId | null;
+    resolve(responds: Set<Respond>, tryingOn: Date, expected: Set<ConsultantId>): ConsultantId | null;
 }

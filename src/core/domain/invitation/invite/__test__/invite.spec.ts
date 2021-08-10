@@ -1,11 +1,11 @@
-import {Invite} from "./invite.";
-import {TenantId} from "../vo/tenant.id";
-import {RoomId} from "../vo/room.id";
-import {ConsultantId} from "../vo/consultant.id";
-import {Shuffle} from "./resolvers/shuffle/shuffle";
-import {Consultant} from "../consultant/consultant";
+import {Invite} from "../invite.";
+import {TenantId} from "../../vo/tenant.id";
+import {RoomId} from "../../vo/room.id";
+import {ConsultantId} from "../../vo/consultant.id";
+import {Shuffle} from "../resolvers/shuffle/shuffle";
+import {Consultant} from "../../consultant/consultant";
 import {EventEmitter} from "events";
-import {InvokeExist} from "../events/invoke.exist";
+import {InvokeExist} from "../../events/invoke.exist";
 
 
 const consultants = new Set
@@ -25,7 +25,7 @@ const invite = new Invite
     new Shuffle(new Date('2021-15-07 12:00'))
 )
 
-test('expected consultant can invokes', () => {
+test('expected consultant can respond', () => {
     const expectedConsultant = new Consultant
     (
         new ConsultantId('efa7c471-9d38-4633-863a-996ef066c685'),
@@ -37,11 +37,11 @@ test('expected consultant can invokes', () => {
         expect(datum).toBeInstanceOf(InvokeExist);
     })
 
-    invite.acceptInvoke(expectedConsultant, new Date('2021-15-07 12:01'));
+    invite.acceptRespond(expectedConsultant, new Date('2021-15-07 12:01'));
     invite.exposeEvents(eventEmitter);
 });
 
-test('unexpected consultants can`nt invokes', () => {
+test('unexpected consultants can`nt respond', () => {
 
     const notExpectedConsultant = new Consultant
     (
@@ -50,7 +50,7 @@ test('unexpected consultants can`nt invokes', () => {
     );
 
     expect(() => {
-        invite.acceptInvoke(notExpectedConsultant, new Date('2021-15-07 12:01'));
+        invite.acceptRespond(notExpectedConsultant, new Date('2021-15-07 12:01'));
     }).toThrow(new Error("unexpected consultant"));
 
 });
