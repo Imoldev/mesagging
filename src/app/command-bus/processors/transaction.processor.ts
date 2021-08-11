@@ -1,5 +1,5 @@
 import {Processor} from "../processor";
-import {Command} from "../../../core/use.cases/commands/command";
+import {Command} from "../../../core/use.cases/actions/command";
 
 export class TransactionProcessor extends Processor {
     constructor() {

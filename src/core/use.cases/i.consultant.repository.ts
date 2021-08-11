@@ -1,5 +1,5 @@
-import {Consultant} from "../domain/invitation/consultant/consultant";
-import {ConsultantId} from "../domain/invitation/vo/consultant.id";
+import {Consultant} from "../domain/consultant/consultant";
+import {ConsultantId} from "../domain/vo/consultant.id";
 
 export interface IConsultantRepository {
     save(consultant: Consultant);

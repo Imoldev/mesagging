@@ -1,5 +1,5 @@
-import {Command} from "../../core/use.cases/commands/command";
-import {IHandler} from "../../core/use.cases/commands/i.handler";
+import {Command} from "../../core/use.cases/actions/command";
+import {IHandler} from "../../core/use.cases/actions/i.handler";
 import {Processor} from "./processor";
 
 export class CommandBus {

@@ -1,8 +1,8 @@
 import {ConsultantCreateCommand} from "./consultant-create.command";
 import {IConsultantRepository} from "../../i.consultant.repository";
-import {Consultant} from "../../../domain/invitation/consultant/consultant";
-import {ConsultantId} from "../../../domain/invitation/vo/consultant.id";
-import {TenantId} from "../../../domain/invitation/vo/tenant.id";
+import {Consultant} from "../../../domain/consultant/consultant";
+import {ConsultantId} from "../../../domain/vo/consultant.id";
+import {TenantId} from "../../../domain/vo/tenant.id";
 import {IHandler} from "../i.handler";
 
 export class ConsultantCreateHandler implements IHandler<ConsultantCreateCommand>{

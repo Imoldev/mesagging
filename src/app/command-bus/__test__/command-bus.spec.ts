@@ -1,7 +1,7 @@
 import {instance, mock, verify, when} from "ts-mockito";
 import {CommandBus} from "../command-bus";
-import {ConsultantCreateHandler} from "../../../core/use.cases/commands/consultant-create/consultant-create.handler";
-import {ConsultantCreateCommand} from "../../../core/use.cases/commands/consultant-create/consultant-create.command";
+import {ConsultantCreateHandler} from "../../../core/use.cases/actions/consultant-create/consultant-create.handler";
+import {ConsultantCreateCommand} from "../../../core/use.cases/actions/consultant-create/consultant-create.command";
 import {LoggerProcessor} from "../processors/logger.processor";
 import {TransactionProcessor} from "../processors/transaction.processor";
 

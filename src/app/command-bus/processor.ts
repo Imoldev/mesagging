@@ -1,4 +1,4 @@
-import {Command} from "../../core/use.cases/commands/command";
+import {Command} from "../../core/use.cases/actions/command";
 
 export abstract class Processor {
 
